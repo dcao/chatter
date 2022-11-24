@@ -28,4 +28,19 @@ defmodule Chatter.OrgsFixtures do
     [_, token | _] = String.split(captured_email.text_body, "[TOKEN]")
     token
   end
+
+  @doc """
+  Generate a org.
+  """
+  def org_fixture(attrs \\ %{}) do
+    {:ok, org} =
+      attrs
+      |> Enum.into(%{
+        description: "some description",
+        name: "some name"
+      })
+      |> Chatter.Orgs.create_org()
+
+    org
+  end
 end
