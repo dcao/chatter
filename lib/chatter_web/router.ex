@@ -1,6 +1,8 @@
 defmodule ChatterWeb.Router do
   use ChatterWeb, :router
 
+  import ChatterWeb.AdminAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,6 +10,7 @@ defmodule ChatterWeb.Router do
     plug :put_root_layout, {ChatterWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_admin
   end
 
   pipeline :api do
@@ -39,6 +42,44 @@ defmodule ChatterWeb.Router do
 
       live_dashboard "/dashboard", metrics: ChatterWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+    end
+  end
+
+  ## Authentication routes
+
+  scope "/", ChatterWeb do
+    pipe_through [:browser, :redirect_if_admin_is_authenticated]
+
+    live_session :redirect_if_admin_is_authenticated,
+      on_mount: [{ChatterWeb.AdminAuth, :redirect_if_admin_is_authenticated}] do
+      live "/admins/register", AdminRegistrationLive, :new
+      live "/admins/log_in", AdminLoginLive, :new
+      live "/admins/reset_password", AdminForgotPasswordLive, :new
+      live "/admins/reset_password/:token", AdminResetPasswordLive, :edit
+    end
+
+    post "/admins/log_in", AdminSessionController, :create
+  end
+
+  scope "/", ChatterWeb do
+    pipe_through [:browser, :require_authenticated_admin]
+
+    live_session :require_authenticated_admin,
+      on_mount: [{ChatterWeb.AdminAuth, :ensure_authenticated}] do
+      live "/admins/settings", AdminSettingsLive, :edit
+      live "/admins/settings/confirm_email/:token", AdminSettingsLive, :confirm_email
+    end
+  end
+
+  scope "/", ChatterWeb do
+    pipe_through [:browser]
+
+    delete "/admins/log_out", AdminSessionController, :delete
+
+    live_session :current_admin,
+      on_mount: [{ChatterWeb.AdminAuth, :mount_current_admin}] do
+      live "/admins/confirm/:token", AdminConfirmationLive, :edit
+      live "/admins/confirm", AdminConfirmationInstructionsLive, :new
     end
   end
 end
