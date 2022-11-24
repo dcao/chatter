@@ -7,6 +7,7 @@ defmodule Chatter.Chats.Convo do
   schema "convos" do
     field :room_name, :string
     belongs_to :org, Chatter.Orgs.Org
+    has_many :messages, Chatter.Chats.Message
 
     timestamps()
   end

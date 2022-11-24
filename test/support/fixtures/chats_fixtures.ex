@@ -22,4 +22,18 @@ defmodule Chatter.ChatsFixtures do
 
     convo
   end
+
+  @doc """
+  Generate a message.
+  """
+  def message_fixture(attrs \\ %{}) do
+    {:ok, message} =
+      attrs
+      |> Enum.into(%{
+        content: "some content"
+      })
+      |> Chatter.Chats.create_message()
+
+    message
+  end
 end
