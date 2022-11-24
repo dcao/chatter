@@ -7,6 +7,7 @@ defmodule Chatter.Orgs.Org do
   schema "orgs" do
     field :description, :string
     field :name, :string
+    has_many :convos, Chatter.Chats.Convo
 
     timestamps()
   end
