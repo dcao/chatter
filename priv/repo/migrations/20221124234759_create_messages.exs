@@ -5,8 +5,9 @@ defmodule Chatter.Repo.Migrations.CreateMessages do
     create table(:messages, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :content, :text
-      add :admin_id, references(:admins, on_delete: :nothing, type: :binary_id)
-      add :convo_id, references(:convos, on_delete: :nothing, type: :binary_id), null: false
+      add :sent_by_org, :boolean, null: false
+      add :admin_id, references(:admins, on_delete: :nilify_all, type: :binary_id)
+      add :convo_id, references(:convos, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end

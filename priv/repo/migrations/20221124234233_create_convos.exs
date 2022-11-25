@@ -5,7 +5,7 @@ defmodule Chatter.Repo.Migrations.CreateConvos do
     create table(:convos, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :room_name, :string, null: false
-      add :org_id, references(:orgs, on_delete: :nothing, type: :binary_id), null: false
+      add :org_id, references(:orgs, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end

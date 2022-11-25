@@ -9,6 +9,7 @@ defmodule Chatter.Orgs.Admin do
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
 
+    many_to_many :orgs, Chatter.Orgs.Org, join_through: "orgs_admins"
     has_many :messages, Chatter.Chats.Message
 
     timestamps()

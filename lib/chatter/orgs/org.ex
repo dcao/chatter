@@ -9,6 +9,8 @@ defmodule Chatter.Orgs.Org do
     field :name, :string
     has_many :convos, Chatter.Chats.Convo
 
+    many_to_many :admins, Chatter.Orgs.Admin, join_through: "orgs_admins"
+
     timestamps()
   end
 

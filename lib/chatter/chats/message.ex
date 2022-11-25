@@ -6,6 +6,7 @@ defmodule Chatter.Chats.Message do
   @foreign_key_type :binary_id
   schema "messages" do
     field :content, :string
+    field :sent_by_org, :boolean
     belongs_to :admin, Chatter.Orgs.Admin
     belongs_to :convo, Chatter.Chats.Convo
 
